@@ -15,15 +15,15 @@ import java.util.Properties;
 
 public class MyKafkaConsumer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaConsumer.class);
+    private final Logger logger;
     private static final String TOPIC_NAME = "streams-output";
     private final Properties properties;
 
     public MyKafkaConsumer() {
+        logger = LoggerFactory.getLogger(MyKafkaConsumer.class);
         properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "MyConsumerGroup");
-        properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
 //        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -40,7 +40,7 @@ public class MyKafkaConsumer {
         while (true) {
             ConsumerRecords<Long, String> records = consumer.poll(Duration.ofMillis(1000));
             for (ConsumerRecord<Long, String> record : records) {
-                LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
+                logger.info(String.format("Record read successfully with key: %s", record.key()));
             }
         }
     }
