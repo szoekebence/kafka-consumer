@@ -15,13 +15,12 @@ import java.util.Properties;
 
 public class MyKafkaConsumer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaConsumer.class);
     private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
     private static final String TOPIC_NAME = "streams-output";
-    private final Logger logger;
     private final Properties properties;
 
     public MyKafkaConsumer() {
-        logger = LoggerFactory.getLogger(MyKafkaConsumer.class);
         properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "MyConsumerGroup");
@@ -40,7 +39,7 @@ public class MyKafkaConsumer {
         while (true) {
             ConsumerRecords<Long, String> records = consumer.poll(Duration.ofMillis(1000));
             for (ConsumerRecord<Long, String> record : records) {
-                logger.info(String.format("Record read successfully with key: %s", record.key()));
+                LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
             }
         }
     }
