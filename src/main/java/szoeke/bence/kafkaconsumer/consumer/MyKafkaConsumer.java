@@ -15,17 +15,17 @@ import java.util.Properties;
 
 public class MyKafkaConsumer {
 
-    private final Logger logger;
+    private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
     private static final String TOPIC_NAME = "streams-output";
+    private final Logger logger;
     private final Properties properties;
 
     public MyKafkaConsumer() {
         logger = LoggerFactory.getLogger(MyKafkaConsumer.class);
         properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "MyConsumerGroup");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
-//        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
     }
 
