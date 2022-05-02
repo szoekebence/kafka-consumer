@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,23 +23,31 @@ public class MyKafkaConsumer {
         properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "MyConsumerGroup");
-        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
     }
 
     public void consumeRecords() {
-        try (KafkaConsumer<Long, String> consumer = new KafkaConsumer<>(properties)) {
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
             consumer.subscribe(Collections.singleton(TOPIC_NAME));
             doConsuming(consumer);
         }
     }
 
-    private void doConsuming(KafkaConsumer<Long, String> consumer) {
+    private void doConsuming(KafkaConsumer<String, String> consumer) {
         while (true) {
-            ConsumerRecords<Long, String> records = consumer.poll(Duration.ofMillis(1000));
-            for (ConsumerRecord<Long, String> record : records) {
-                LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+            for (ConsumerRecord<String, String> record : records) {
+                doLogging(record);
             }
+        }
+    }
+
+    private void doLogging(ConsumerRecord<String, String> record) {
+        if (record.value().length() < 10) {
+            LOGGER.info(String.format("Record read successfully with key | value: %s | %s", record.key().substring(0, 3), record.value()));
+        } else {
+            LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
         }
     }
 }
