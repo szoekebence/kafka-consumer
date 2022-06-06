@@ -18,6 +18,7 @@ public class MyKafkaConsumer {
     private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
     private static final String TOPIC_NAME = "streams-output";
     private final Properties properties;
+    private long sequenceNumber = 0L;
 
     public MyKafkaConsumer() {
         properties = new Properties();
@@ -45,9 +46,9 @@ public class MyKafkaConsumer {
 
     private void doLogging(ConsumerRecord<String, String> record) {
         if (record.value().length() < 10) {
-            LOGGER.info(String.format("Record read successfully with key | value: %s | %s", record.key().substring(0, 3), record.value()));
+            LOGGER.info(String.format("Record read successfully with sequenceNuber: %d", ++sequenceNumber));
         } else {
-            LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
+            LOGGER.info(String.format("Record read successfully with sequenceNuber: %d", ++sequenceNumber));//FIXME
         }
     }
 }
