@@ -1,0 +1,4 @@
+**ENVIRONMENT VARIABLES:**
+
+    BOOTSTRAP_SERVER=localhost:9092
+    TOPIC_NAME=streams-output

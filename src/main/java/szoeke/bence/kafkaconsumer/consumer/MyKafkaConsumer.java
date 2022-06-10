@@ -16,7 +16,8 @@ public class MyKafkaConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaConsumer.class);
     private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
-    private static final String TOPIC_NAME = "streams-output";
+    private static final String TOPIC_NAME_ENV_VAR = "TOPIC_NAME";
+    private static final String TOPIC_NAME = System.getenv(TOPIC_NAME_ENV_VAR);
     private final Properties properties;
     private long sequenceNumber = 0L;
 
