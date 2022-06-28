@@ -19,6 +19,7 @@ public class MyKafkaConsumer {
     private static final String TOPIC_NAME_ENV_VAR = "TOPIC_NAME";
     private static final String TOPIC_NAME = System.getenv(TOPIC_NAME_ENV_VAR);
     private final Properties properties;
+    private long sequenceNumber = 0;
 
     public MyKafkaConsumer() {
         properties = new Properties();
@@ -46,7 +47,9 @@ public class MyKafkaConsumer {
 
     private void doLogging(ConsumerRecord<String, String> record) {
         if (record.value().length() < 10) {
-            LOGGER.info(String.format("Record read successfully with key | value: %s | %s", record.key(), record.value()));
+            sequenceNumber += Long.parseLong(record.value());
+            LOGGER.info(String.format("Record read successfully with key | value: %s | %s \n" +
+                    "Record count: %d", record.key(), record.value(), sequenceNumber));
         } else {
             LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
         }
