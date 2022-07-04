@@ -20,6 +20,7 @@ public class MyKafkaConsumer {
     private static final String TOPIC_NAME = System.getenv(TOPIC_NAME_ENV_VAR);
     private final Properties properties;
     private long sequenceNumber = 0;
+    private long maxKeyValueReceived = 0;
 
     public MyKafkaConsumer() {
         properties = new Properties();
@@ -50,8 +51,9 @@ public class MyKafkaConsumer {
             sequenceNumber += Long.parseLong(record.value());
             LOGGER.info(String.format("Record read successfully with key | value: %s | %s \n" +
                     "Record count: %d", record.key(), record.value(), sequenceNumber));
-        } else {
-            LOGGER.info(String.format("Record read successfully with key: %s", record.key()));
+        } else if (Long.parseLong(record.key()) > maxKeyValueReceived) {
+            maxKeyValueReceived = Long.parseLong(record.key());
+            LOGGER.info(String.format("Record read successfully with key: %s", maxKeyValueReceived));
         }
     }
 }
