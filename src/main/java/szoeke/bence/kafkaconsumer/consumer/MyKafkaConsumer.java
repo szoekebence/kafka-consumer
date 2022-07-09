@@ -50,11 +50,11 @@ public class MyKafkaConsumer {
         long key = Long.parseLong(record.key());
         if (record.value().length() < 10) {
             sequenceNumber += Long.parseLong(record.value());
-            LOGGER.info(String.format("Record read successfully with key | value: %d | %s \n" +
-                    "Record count: %d", key, record.value(), sequenceNumber));
+            LOGGER.info("Record read successfully with key | value: {} | {} \n" +
+                    "Record count: {}", key, record.value(), sequenceNumber);
         } else if (key > maxKeyValueReceived) {
             maxKeyValueReceived = key;
-            LOGGER.info(String.format("Record read successfully with key: %s", maxKeyValueReceived));
+            LOGGER.info("Record read successfully with key: {}", maxKeyValueReceived);
         }
     }
 }
