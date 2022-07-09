@@ -47,12 +47,13 @@ public class MyKafkaConsumer {
     }
 
     private void doLogging(ConsumerRecord<String, String> record) {
+        long key = Long.parseLong(record.key());
         if (record.value().length() < 10) {
             sequenceNumber += Long.parseLong(record.value());
-            LOGGER.info(String.format("Record read successfully with key | value: %s | %s \n" +
-                    "Record count: %d", record.key(), record.value(), sequenceNumber));
-        } else if (Long.parseLong(record.key()) > maxKeyValueReceived) {
-            maxKeyValueReceived = Long.parseLong(record.key());
+            LOGGER.info(String.format("Record read successfully with key | value: %d | %s \n" +
+                    "Record count: %d", key, record.value(), sequenceNumber));
+        } else if (key > maxKeyValueReceived) {
+            maxKeyValueReceived = key;
             LOGGER.info(String.format("Record read successfully with key: %s", maxKeyValueReceived));
         }
     }
