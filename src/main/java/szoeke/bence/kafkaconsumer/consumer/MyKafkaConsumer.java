@@ -4,7 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,20 +24,20 @@ public class MyKafkaConsumer {
         properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "szokeb-consumer-group");
-        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
     }
 
     public void consumeRecords() {
-        try (KafkaConsumer<Void, String> consumer = new KafkaConsumer<>(properties)) {
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
             consumer.subscribe(Collections.singleton(TOPIC_NAME));
             doConsuming(consumer);
         }
     }
 
-    private void doConsuming(KafkaConsumer<Void, String> consumer) {
+    private void doConsuming(KafkaConsumer<String, String> consumer) {
         while (true) {
-            ConsumerRecords<Void, String> records = consumer.poll(Duration.ofMillis(1000));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
             numOfEvents += records.count();
             LOGGER.info("Number of read records: {}.", numOfEvents);
         }
