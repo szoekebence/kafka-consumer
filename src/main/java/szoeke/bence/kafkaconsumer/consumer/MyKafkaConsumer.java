@@ -1,6 +1,7 @@
 package szoeke.bence.kafkaconsumer.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -18,7 +19,6 @@ public class MyKafkaConsumer {
     private static final String TOPIC_NAME_ENV_VAR = "TOPIC_NAME";
     private static final String TOPIC_NAME = System.getenv(TOPIC_NAME_ENV_VAR);
     private final Properties properties;
-    private long numOfEvents = 0;
 
     public MyKafkaConsumer() {
         properties = new Properties();
@@ -37,9 +37,11 @@ public class MyKafkaConsumer {
 
     private void doConsuming(KafkaConsumer<String, String> consumer) {
         while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-            numOfEvents += records.count();
-            LOGGER.info("Number of read records: {}.", numOfEvents);
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1));
+            for (ConsumerRecord<String, String> record : records) {
+                LOGGER.info("RecordKey: {}.\n", record.key());
+                LOGGER.info("RecordValue: {}.\n", record.value());
+            }
         }
     }
 }
